@@ -1,0 +1,347 @@
+
+
+# import mods.API_Spells.API_Spells as API_Spells
+# import mods.API_RitualSpells.API_RitualSpells as API_RitualSpells
+# import Level
+# import Spells
+# import random
+# import os
+
+# RitualSpellTag = Level.Tag("Ritual", Level.Color(149, 84, 247))
+# Level.Tags.elements.append(RitualSpellTag)
+# API_Spells.add_tag_tooltip(RitualSpellTag)
+# API_Spells.add_tag_keybind(RitualSpellTag, 'R')
+
+
+# class ToMeSpell(Level.Spell):
+# 	def on_init(self):
+# 		self.range = 20
+# 		self.requires_los = True
+# 		self.max_charges = 10
+# 		self.name = "To Me"
+# 		self.can_target_self = True
+# 		self.can_target_ally = True
+# 		self.radius = 3
+		
+# 		self.tags = [Level.Tags.Translocation, Level.Tags.Sorcery]
+# 		self.level = 4
+
+# 	def get_impacted_tiles(self, x, y):
+# 		return self.caster.level.get_points_in_ball(x, y, self.get_stat('radius'))
+
+# 	def cast(self, x, y):
+# 		for p in self.caster.level.get_units_in_ball(Point(x, y), self.get_stat('radius')):
+# 			target = self.caster.level.get_unit_at(p.x, p.y)
+
+# 			if target == self.caster:
+# 				continue
+			
+# 			target_point = self.caster.level.get_summon_point(self.caster.x, self.caster.y, sort_dist=False)
+
+# 			self.caster.level.show_effect(target.x, target.y, Level.Tags.Translocation)
+# 			yield 
+# 			self.caster.level.act_move(target, target_point.x, target_point.y, teleport=True)
+# 			yield
+# 			self.caster.level.show_effect(target.x, target.y, Level.Tags.Translocation)
+
+
+# 	def get_description(self):
+# 		return ("Teleport all units in a [{radius}_tile_radius:translocation] to yourself.\n"
+# 				"This spell can be cast up to {range} tiles away.").format(**self.fmt_dict())
+# Spells.all_player_spell_constructors.append(ToMeSpell)
+
+
+# class FireWallSpell(API_RitualSpells.RitualSpell):
+# 	def on_init(self):
+# 		API_RitualSpells.RitualSpell.on_init(self)
+# 		self.name = 'Firewall'
+# 		self.level = 2
+# 		self.max_charges = 12
+# 		self.tags = [Level.Tags.Fire, Level.Tags.Ritual]
+# 		self.range = 4
+
+
+# 		self.pillar_name = "Firewall Pillar"
+# 		self.pillar_sprite_path = os.path.join("..","..","mods","ClaysRitualSpells","pillar_of_fire")
+# 		self.pillar_description = "A ritual spell pillar."
+
+# 		self.pillar_health = 10 # upgradeable
+# 		self.required_pillar_count = 2
+# 		self.max_pillar_count = 3 # upgradeable
+# 		self.pillar_burst_radius = 0 # upgradeable
+
+# 		self.include_edges = True
+# 		self.include_inner_area = False
+		
+# 		self.damage = 15
+
+# 		# (magnitude, sp cost, name, description, optional - upgrade group name)
+# 		self.upgrades['max_charges'] = (6, 1)
+# 		self.upgrades['pillar_health'] = (15, 2)
+# 		self.upgrades['max_pillar_count'] = (8, 4)
+# 		self.upgrades['pillar_burst_radius'] = (1, 3, 'Pillar Defense', 'Pillars also deal fire damage in a 1 tile burst around themselves.')
+# 		self.upgrades['exclude_allies_from_aoe'] = (1, 3, 'Pyrokenisis', 'Pillars do not damage allies.')
+			
+	
+# 	def on_cast_tile(self, x, y):
+# 		self.caster.level.deal_damage(x, y, self.get_stat('damage'), Level.Tags.Fire, self)
+
+	
+# 	def get_description(self):
+# 		return ("Create a wall of fire between each pillar that's a part of this ritual.\n"
+# 				"Each turn, each tile in a line between adjacent pillars takes [{damage}_fire_damage:fire].\n"
+# 				"Place at leaset {required_pillar_count} and up to {max_pillar_count} pillars.").format(**self.fmt_dict())
+# Spells.all_player_spell_constructors.append(FireWallSpell)
+
+
+# def ThunderHound():
+# 	unit = Unit()
+# 	unit.name = "Thunder Hound"
+# 	eldrichThing.asset_name = os.path.join("..","..","mods","ClaysRitualSpells","thunder_hound")
+# 	unit.max_hp = 19
+# 	unit.resists[Tags.Lightning] = 100
+# 	unit.resists[Tags.Dark] = 50
+# 	unit.spells.append(SimpleMeleeAttack(damage=6, damage_type=Tags.Lightning))
+# 	unit.spells.append(LeapAttack(damage=6, damage_type=Tags.Lightning, range=4))
+# 	unit.buffs.append(Thorns(4, Level.Tags.Lightning))
+# 	unit.tags = [Level.Tags.Demon, Level.Tags.Lightning]
+# 	return unit
+
+# class StormHoundsRitualBuff(Level.Buff):
+# 	def __init__(self, spell):
+# 		Level.Buff.__init__(self)
+# 		self.name = "Storm Hounds"
+# 		self.buff_type = Level.BUFF_TYPE_BLESS
+# 		self.description = "Summoning a wolf will also summon an ice hound and a thunder hound."
+		
+# 		self.spell = spell
+
+# 	def on_applied(self, owner):
+# 		self.owner_triggers[Level.EventOnSpellCast] = self.on_spell_cast
+
+# 	def on_advance(self):
+# 		pass
+
+	
+# 	def on_spell_cast(self, spell_cast_event):
+# 		if isinstance(spell_cast_event.spell, Spells.SummonWolfSpell):
+# 			ice_hound = Monsters.IceHound()
+# 			ice_hound.team = self.caster.team
+
+# 			thunder_hound = ThunderHound()
+# 			thunder_hound.team = self.caster.team
+
+# 			self.summon(ice_hound, self.caster.level.get_summon_point(spell_cast_event.x, spell_cast_event.y, sort_dist=False))
+# 			self.summon(thunder_hound, self.caster.level.get_summon_point(spell_cast_event.x, spell_cast_event.y, sort_dist=False))
+
+					
+
+# class RitualOfStorms(API_RitualSpells.RitualSpell):
+# 	def on_init(self):
+# 		API_RitualSpells.RitualSpell.on_init(self)
+# 		self.name = 'Ritual of Storms'
+# 		self.level = 3
+# 		self.max_charges = 12
+# 		self.tags = [Level.Tags.Lightning, Level.Tags.Ice, Level.Tags.Ritual]
+# 		self.range = 4 # upgradeable
+
+
+# 		self.pillar_name = "Pillar of Storms"
+# 		self.pillar_sprite_path = os.path.join("..","..","mods","ClaysRitualSpells","pillar_of_storms")
+# 		self.pillar_description = "A ritual spell pillar."
+
+# 		self.pillar_health = 15 # upgradeable
+# 		self.required_pillar_count = 3 
+# 		self.max_pillar_count = 5 
+# 		self.pillar_burst_radius = 0 
+
+# 		self.pillars_fly = True
+
+
+# 		self.spawn_chance = 20 # upgradeable
+# 		self.stats.append('spawn_chance')
+# 		self.duration = 2 # upgradeable
+# 		self.damage = 5 # upgradeable
+# 		self.strikechance = 100
+
+		
+# 		# (magnitude, sp cost, name, description, optional - upgrade group name)
+# 		self.upgrades['range'] = (2, 1)
+# 		self.upgrades['pillar_health'] = (10, 2)
+# 		self.upgrades['spawn_chance'] = (20, 2, 'Chance of Rain', 'Each tile has a 40%% chance of spawning a storm each turn.')
+# 		self.upgrades['damage'] = (10, 2, 'Stronger Storms', 'Storms deal 15 [lightning] or [ice] damage.')
+# 		self.upgrades['storm_hounds'] = (1, 3, 'Storm Hounds', 'Casting Wolf while standing in this ritual\'s aoe will additionally summon an ice wolf and a thunder wolf.')
+			
+
+# 	def on_cast_tile(self, x, y):
+# 		if random.random()*100 < self.spawn_chance:
+# 			if random.random() < 0.5:
+# 				cloud = StormCloud(self.caster)
+# 				cloud.duration = self.get_stat('duration')
+# 				cloud.damage = self.get_stat('damage')
+# 				cloud.strikechance = self.get_stat('strikechance') / 100.0
+# 				cloud.source = self
+# 				self.caster.level.add_obj(cloud, p.x, p.y)
+# 			else:
+# 				cloud = BlizzardCloud(self.caster)
+# 				cloud.duration = self.get_stat('duration')
+# 				cloud.damage = self.get_stat('damage')
+# 				cloud.source = self
+# 				self.caster.level.add_obj(cloud, p.x, p.y)
+		
+# 		if self.get_stat('storm_hounds'):
+# 			unit = self.caster.level.get_unit_at(x, y)
+# 			if unit:
+# 				unit.apply_buff(StormHoundsRitualBuff(self), 1)
+
+# 	def get_description(self):
+# 		return ("Create thunderclouds and ice storms within the area of the ritual.\n"
+# 				"Each turn, each tile in the ritual area has a [{spawn_chance}%_chance:strikechance] spawning a storm that lasts for [{duration}_turns:duration].\n"
+# 				"Each storm deals [{damage}_damage:damage] as [lightning] or [ice] damage, depending on the storm type.\n"
+# 				"Place at leaset {required_pillar_count} and up to {max_pillar_count} pillars.").format(**self.fmt_dict())
+# Spells.all_player_spell_constructors.append(RitualOfStorms)
+
+
+# class FarsightBuff(Level.Buff):
+# 	def __init__(self, spell):
+# 		Level.Buff.__init__(self)
+# 		self.name = "Farsight"
+# 		self.buff_type = Level.BUFF_TYPE_BLESS
+# 		self.description = "You can see through the pillars of this ritual as if they were your own eyes, your own near-sighted eyes."
+		
+# 		self.spell = spell
+
+# 	def on_applied(self, owner):
+# 		pass
+
+# 	def on_advance(self):
+# 		pass
+
+
+# old_can_see = Level.Level.can_see
+# def can_see(self, x1, y1, x2, y2, light_walls=False):
+# 	unit_looking = self.get_unit_at(x1, x2)
+# 	farsight_buff = [buff for buff in unit_looking.buffs if isinstance(buff, FarsightBuff)] if unit_looking else []
+# 	farsight_buff = farsight_buff[0] if len(farsight_buff) > 0 else None
+# 	if farsight_buff:
+# 		pillar_sight_range = farsight_buff.spell.get_stat('pillar_burst_radius')
+# 		return old_can_see(self, x1, y1, x2, y2, light_walls=light_walls) or any(
+# 			Level.distance(Level.Point(x2, y2), Level.Point(pillar.x, pillar.y), diag=False) <= pillar_sight_range \
+# 			for pillar in farsight_buff.spell.pillars
+# 		)
+	
+# 	return old_can_see(self, x1, y1, x2, y2, light_walls=light_walls)
+# Level.Level.can_see = can_see
+
+# old_can_cast = Level.Spell.can_cast
+# def can_cast(self, x, y):
+# 	if (not self.can_target_self) and (self.caster.x == x and self.caster.y == y):
+# 		return False
+
+# 	if (not self.can_target_empty) and (not self.caster.level.get_unit_at(x, y)):
+# 		return False
+
+# 	if self.must_target_walkable and not self.caster.level.can_walk(x, y):
+# 		return False
+
+# 	if self.must_target_empty and self.caster.level.get_unit_at(x, y):
+# 		return False
+
+# 	if self.caster.is_blind() and Level.distance(Level.Point(x, y), self.caster, diag=True) > 1:
+# 		return False
+
+# 	if not Level.distance(Level.Point(x, y), Level.Point(self.caster.x, self.caster.y), diag=self.melee or self.diag_range) <= self.get_stat('range'):
+# 		unit_looking = self.caster
+# 		farsight_buff = [buff for buff in unit_looking.buffs if isinstance(buff, FarsightBuff)] if unit_looking else []
+# 		farsight_buff = farsight_buff[0] if len(farsight_buff) > 0 else None
+# 		if farsight_buff:
+# 			pillar_sight_range = farsight_buff.spell.get_stat('pillar_burst_radius')
+
+# 			if any(
+# 				Level.distance(Level.Point(x, y), Level.Point(pillar.x, pillar.y), diag=False) <= pillar_sight_range \
+# 				and (not self.get_stat('requires_los') or self.caster.level.can_see(pillar.x, pillar.y, x, y, light_walls=self.cast_on_walls))
+# 				for pillar in farsight_buff.spell.pillars
+# 			):
+# 				return True
+# 			return False
+# 		else:
+# 			return False
+
+# 	if self.get_stat('requires_los'):
+# 		if not self.caster.level.can_see(self.caster.x, self.caster.y, x, y, light_walls=self.cast_on_walls):
+# 			return False
+
+# 	return True
+# Level.Spell.can_cast = can_cast
+
+# # get_targetable_tiles
+# old_get_targetable_tiles = Level.Spell.get_targetable_tiles
+# def get_targetable_tiles(self):
+# 	tiles = old_get_targetable_tiles(self)
+
+# 	unit_looking = self.caster
+# 	farsight_buff = [buff for buff in unit_looking.buffs if isinstance(buff, FarsightBuff)] if unit_looking else []
+# 	farsight_buff = farsight_buff[0] if len(farsight_buff) > 0 else None
+# 	if farsight_buff:
+# 		pillar_sight_range = farsight_buff.spell.get_stat('pillar_burst_radius')
+
+# 		for pillar in farsight_buff.spell.pillars:
+# 			pillar_candidates = self.caster.level.get_points_in_ball(pillar.x, pillar.y, self.get_stat('pillar_burst_radius'))
+# 			tiles += [p for p in pillar_candidates if self.can_cast(p.x, p.y)]
+
+# 	return tiles
+# Level.Spell.get_targetable_tiles = get_targetable_tiles
+
+# class RitualOfFarsight(API_RitualSpells.RitualSpell):
+# 	def on_init(self):
+# 		API_RitualSpells.RitualSpell.on_init(self)
+# 		self.name = 'Ritual of Farsight'
+# 		self.level = 2
+# 		self.max_charges = 12
+# 		self.tags = [Level.Tags.Translocation, Level.Tags.Ritual]
+# 		self.range = 4 # upgradeable
+
+
+# 		self.pillar_name = "Pillar of Farsight"
+# 		self.pillar_sprite_path = os.path.join("..","..","mods","ClaysRitualSpells","pillar_of_farsight")
+# 		self.pillar_description = "A ritual spell pillar."
+
+# 		self.pillar_health = 15 # upgradeable
+# 		self.required_pillar_count = 2
+# 		self.max_pillar_count = 3 # upgradeable 
+# 		self.pillar_burst_radius = 4 # upgradeable 
+
+# 		self.pillars_fly = False # upgradeable
+
+# 		self.exclude_enemies_from_aoe = True
+
+
+		
+# 		# (magnitude, sp cost, name, description, optional - upgrade group name)
+# 		# self.upgrades['range'] = (2, 1)
+# 		# self.upgrades['pillar_health'] = (10, 2)
+# 		# self.upgrades['spawn_chance'] = (20, 2, 'Chance of Rain', 'Each tile has a 40%% chance of spawning a storm each turn.')
+# 		# self.upgrades['damage'] = (10, 2, 'Stronger Storms', 'Storms deal 15 [lightning] or [ice] damage.')
+			
+
+# 	def on_cast_tile(self, x, y):
+# 		unit = self.caster.level.get_unit_at(x, y)
+# 		if unit:
+# 			unit.apply_buff(FarsightBuff(self), 1)
+
+# 	def get_description(self):
+# 		return ("Create pillars that let you see at a distance.\n"
+# 				"If you or an ally stands within [{range}_tiles:range] of a pillar, your line of sight will include all tiles in every pillar's line of sight, within [{range}_tiles:range].\n"
+# 				"").format(**self.fmt_dict())
+
+# Spells.all_player_spell_constructors.append(RitualOfFarsight)
+
+
+
+# # class RitualOfCascade(API_RitualSpells.RitualSpell):
+
+
+# # class RitualOfMirrors(API_RitualSpells.RitualSpell):
+
+
+# # class ForceWall(API_RitualSpells.RitualSpell):
