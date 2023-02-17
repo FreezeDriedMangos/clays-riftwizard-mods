@@ -1,0 +1,3 @@
+[submodule "Multiplayer\\API_Multiplayer"]
+    path = Multiplayer\\API_Multiplayer
+    url = https://github.com/FreezeDriedMangos/riftwizard-multiplayer.git
