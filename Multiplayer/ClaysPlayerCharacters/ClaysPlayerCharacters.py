@@ -730,7 +730,9 @@ def scarecrow_quirks(self):
 API_Multiplayer.add_character_to_char_select(["ClaysPlayerCharacters","scarecrow"], 'Scarecrow', \
 	color_scheme_from_hsv_color((45/360, 0.92, 1)), \
 	'', scarecrow_quirks, 
-	'- TODO\n'
+	'- 50 [metallic] and 50 [fire] resist\n' # TODO: implement this
+	'- Can buy a spell like Touch of Death that deals [fire] damage\n' # TODO: implement this
+	'- [Fire] spells deal 1.5x damage against [metallic] targets' # TODO: implement this
 	'- Is a [living] [metallic] [construct]')
 
 
@@ -742,8 +744,9 @@ def lunatic_cultist_quirks(self):
 API_Multiplayer.add_character_to_char_select(["ClaysPlayerCharacters","lunatic_cultist"], 'Lunatic Cultist', \
 	color_scheme_from_hsv_color((45/360, 0.92, 1)), \
 	'', lunatic_cultist_quirks, 
-	'- TODO\n'
-	'')
+	'- Ritual spells are 1 SP cheaper (if the Ritual Spells mod is installed)\n' # TODO: implement this
+	'- Charged spells are 1 SP cheaper\n' # TODO: implement this
+	'- Spells that are not charged or ritual cannot be purchased') # TODO: implement this
 	
 
 
@@ -752,8 +755,10 @@ def ceria_quirks(self):
 API_Multiplayer.add_character_to_char_select(["ClaysPlayerCharacters","ice_squirrel"], 'Ceria', \
 	color_scheme_from_hsv_color((45/360, 0.92, 1)), \
 	'', ceria_quirks, 
-	'- TODO\n'
-	'')
+	'- 100 [ice] resist\n' # TODO: implement this
+	'- All [ice] spells are 1 SP cheaper\n' # TODO: implement this
+	'- Can only learn [ice] spells\n' # TODO: implement this
+	'- All [ice] spells targeting a friendly skeleton upgrade them instead of dealing damage') # TODO: implement this
 
 
 def pisces_quirks(self):
@@ -761,8 +766,9 @@ def pisces_quirks(self):
 API_Multiplayer.add_character_to_char_select(["ClaysPlayerCharacters","pisces"], 'Pisces', \
 	color_scheme_from_hsv_color((45/360, 0.92, 1)), \
 	'', pisces_quirks, 
-	'- TODO\n'
-	'')
+	'- Deals 1.5x damage against [dark] targets\n' # TODO: implement this
+	'- All [dark] spells are 1 SP cheaper\n' # TODO: implement this
+	'- Starts with a Summon Skeleton spell that can be re-cast on a friendly skeleton to upgrade it') # TODO: implement this
 
 
 
@@ -792,8 +798,8 @@ def jellyfish_quirks(self):
 API_Multiplayer.add_character_to_char_select(["ClaysPlayerCharacters","jellyfish"], 'Jellyfish', \
 	color_scheme_from_hsv_color((45/360, 0.92, 1)), \
 	'', jellyfish_quirks, 
-	'- TODO\n'
-	'')
+	'- Whenever a target is dealt [poison] damage, all stacks of poison are convereted to venom. Each turn, venom deals one damage per stack, then halves its stack size\n' # TODO: implement this
+	'- Can purchase a unique Touch of Death spell that deals [poison] damage\n' ) # TODO: implement this
 	
 
 def mesmer_quirks(self):
@@ -801,8 +807,9 @@ def mesmer_quirks(self):
 API_Multiplayer.add_character_to_char_select(["ClaysPlayerCharacters","mesmer"], 'Mesmer', \
 	color_scheme_from_hsv_color((45/360, 0.92, 1)), \
 	'It is your primary directive to swIm ClOseR. iT lOoKs sO fRieNdlY', mesmer_quirks, 
-	'- TODO\n'
-	'')
+	'- [Arcane] spells are 1 SP cheaper\n' # TODO: implement this
+	'- [Enchantment] spells are 1 SP cheaper\n' # TODO: implement this
+	'- Cannot learn [sorcery] spells') # TODO: implement this
 
 
 
